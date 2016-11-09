@@ -1,0 +1,15 @@
+create table AuditList (AuditDate datetime, AuditDescription  varchar(200))
+go
+
+declare @loopCounter  int
+select @loopCounter = 50
+
+while @loopCounter < 55
+begin
+   insert into ExpertTable values(@loopCounter, cast(@loopCounter as varchar) + ' Description')
+   insert into AuditList values(SYSDATETIME(), 'ExpertTable Insert + ' +  cast(@loopCounter as varchar))
+   select @loopCounter = @loopCounter + 1
+end
+
+
+select * from AuditList
