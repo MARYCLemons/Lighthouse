@@ -1,0 +1,20 @@
+SQL Script to make sure that an update without a where clause does not affect all records in table.
+
+create table ExpertTable (RecordNbr int, RecordText25 varchar(25))
+go
+
+declare @loopCounter  int
+select @loopCounter = 1
+
+while @loopCounter < 50
+begin
+   insert into ExpertTable values(@loopCounter, cast(@loopCounter as varchar) + ' Description')
+   select @loopCounter = @loopCounter + 1
+end
+
+
+set rowcount 1
+update ExpertTable set Recordtext25 = 'BLANK'
+
+set rowcount 0
+select * from ExpertTable
