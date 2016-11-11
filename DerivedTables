@@ -1,0 +1,8 @@
+Use of Derived Tables Below
+
+select bill_num, bill_date, TimeDetails.billed_amt TimeTransaction
+from bill billSummary
+left join ( select tran_date, bill_tran_uno, billed_amt, matter_uno 
+            from time ) TimeDetails on BillSummary.tran_uno=TimeDetails.bill_tran_uno
+left join (select matter_uno, b.client_code, client_name, matter_name from matter a inner join client b on a.client_uno=b.client_uno ) MatterDetails on TimeDetails.Matter_uno=MatterDetails.Matter_uno
+where bill_num = 95
