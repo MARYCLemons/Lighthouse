@@ -1,0 +1,19 @@
+Create a simple workflow
+
+Create a new Visual Studio 2012 empty solution called CreationEndpointTest.
+
+Add a new WCF Workflow Service Application project called SimpleWorkflow to the solution. The workflow designer will open.
+
+Delete the ReceiveRequest and SendResponse activities. 
+     These activities are what makes a workflow a workflow service. 
+     Since we are not working with a workflow service, we no longer need them.
+
+Set the DisplayName for the sequence activity to “Sequential Workflow”.
+
+Rename Service1.xamlx to Workflow1.xamlx.
+
+Click the designer outside of the sequence activity, and set the Name and ConfigurationName properties to “Workflow1”
+
+Drag a WriteLine activity into the Sequence. 
+      The WriteLine activity can be found in the Primitives section of the toolbox. 
+      Set the Text property of the WriteLine activity to “Hello, world”.
