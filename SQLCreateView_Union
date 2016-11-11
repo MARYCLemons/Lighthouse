@@ -1,0 +1,86 @@
+CREATE VIEW [dbo].[CMSRecords]
+AS
+
+--Box, Jacket, Folder, Insert
+SELECT DISTINCT  
+	'Box' as rec_type,
+	b.box_uno,
+	'' as jacket_uno,
+	'' as folder_uno,
+	'' as insert_uno,
+	b.box_num as 'rec_num',
+	b.box_desc as 'rec_desc',
+	b.barcode,
+	'' as client_code,
+	'' as client_name,
+	'' as matter_code,
+	'' as matter_name,
+	b.hold_until
+FROM expert.dbo.rmm_box b
+
+UNION ALL
+
+SELECT DISTINCT  
+	'Jacket' as rec_type,
+	j.box_uno,
+	j.jacket_uno,
+	'' as folder_uno,
+	'' as insert_uno,
+	j.jacket_num as 'rec_num',
+	j.jacket_desc as 'rec_desc',
+	j.barcode,
+	c.client_code,
+	c.client_name,
+	m.matter_code,
+	m.matter_name,
+	j.hold_until
+FROM expert.dbo.rmm_jacket j
+INNER JOIN expert.dbo.rmm_box b on b.box_uno = j.box_uno
+INNER JOIN expert.dbo.hbm_matter m ON m.matter_uno = j.matter_uno
+INNER JOIN expert.dbo.hbm_client c ON c.client_uno = m.client_uno
+
+UNION ALL
+
+SELECT DISTINCT  
+	'Folder' as rec_type,
+	f.box_uno,
+	f.jacket_uno,
+	f.folder_uno,
+	'' as insert_uno,
+	f.folder_num as 'rec_num',
+	f.folder_desc as 'rec_desc',
+	f.barcode,
+	c.client_code,
+	c.client_name,
+	m.matter_code,
+	m.matter_name,
+	f.hold_until
+FROM expert.dbo.rmm_folder f
+INNER JOIN expert.dbo.rmm_jacket j on j.jacket_uno = f.jacket_uno
+INNER JOIN expert.dbo.rmm_box b on b.box_uno = f.box_uno
+INNER JOIN expert.dbo.hbm_matter m ON m.matter_uno = f.matter_uno
+INNER JOIN expert.dbo.hbm_client c ON c.client_uno = m.client_uno
+
+UNION ALL
+
+SELECT DISTINCT  
+	'Insert' as rec_type,
+	i.box_uno,
+	'' as jacket_uno,
+	i.folder_uno,
+	i.insert_uno,
+	i.insert_num as 'rec_num',
+	i.insert_desc as 'rec_desc',
+	i.barcode,
+	c.client_code,
+	c.client_name,
+	m.matter_code,
+	m.matter_name,
+	i.hold_until
+FROM expert.dbo.rmm_insert i
+INNER JOIN expert.dbo.rmm_folder f on f.folder_uno = i.folder_uno
+--INNER JOIN expert.dbo.rmm_jacket j on j.jacket_uno = i.jacket_uno
+INNER JOIN expert.dbo.rmm_box b on b.box_uno = i.box_uno
+INNER JOIN expert.dbo.hbm_matter m ON m.matter_uno = i.matter_uno
+INNER JOIN expert.dbo.hbm_client c ON c.client_uno = m.client_uno
+GO
