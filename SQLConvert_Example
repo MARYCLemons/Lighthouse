@@ -1,0 +1,13 @@
+SELECT 	
+	j.job_name 'Job Name',
+	convert(varchar(50),s.last_modified,101) 'Run Date',
+	sum(s.total_files) 'Total Files', 
+	sum(s.total_pages) 'Total Pages', 
+	sum(s.files_created) 'Files Created', 
+	sum(s.total_dupes) 'Total Duplicates', 
+	sum(s.total_warnings) 'Total Warnings', 
+	sum(s.total_errors) 'Total Errors'
+FROM dbo.ts_sessions s
+INNER JOIN dbo.ts_jobs j on s.job_id = j.job_id
+Group By j.job_name, convert(varchar(50),s.last_modified,101)
+Order by 1,2
