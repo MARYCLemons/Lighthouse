@@ -1,0 +1,10 @@
+-- Sample of adding an AD group and creating a role
+/*
+Create an Active Directory group on the domain called GroupName 
+(which we were already using for file permissions to the folders).  Then created a database role 
+called ExpertImage and added the group to this role.  Then grant update rights to 
+CRT_CASH and APT_INVOICE to the role.
+*/
+CREATE USER [Domain\User] FOR LOGIN [Domain\LoginName]
+CREATE ROLE [DatabaseName] AUTHORIZATION [SysAdmin]
+EXEC sp_addrolemember N'ExpertImage', N'Domain\User'
