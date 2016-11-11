@@ -1,0 +1,12 @@
+CREATE TRIGGER [CheckEntryBarcode] ON [dbo].[APT_INVOICE_AMT] 
+FOR INSERT 
+AS
+if exists (select 1 from inserted where TRAN_TYPE = 'CH')
+Begin
+	UPDATE APT_INVOICE SET _QI_ID = chk._qi_id 
+	FROM APT_INVOICE inv 
+	JOIN inserted i ON inv.TRAN_UNO = i.INV_TRAN_UNO 
+	JOIN APT_CHECK chk ON chk.TRAN_UNO = i.SOURCE_TRAN_UNO
+
+	WHERE chk._qi_id IS NOT NULL AND chk._qi_id <> ''
+End
