@@ -1,0 +1,34 @@
+set nocount on
+declare @cursorstatus int, @prebill_num int, @cnt int
+set @cnt = 0
+
+declare curs_data cursor READ_ONLY for
+	-- Get all prebill numbers from CMS that are not in prof_general
+	select b.prebill_num
+	from cmsopen.dbo.blt_bill b 
+	left join dbo.prof_general p on b.prebill_num = p.source_id 
+	where p.source_id is null
+	and b.period > 200501
+
+set @cursorstatus = 0
+open curs_data 
+
+while( @cursorstatus = 0 )
+  begin
+	fetch next from curs_data into
+		@prebill_num
+
+	set @cursorstatus = @@fetch_status
+	if( @cursorstatus = 0 )
+	  begin
+		-- Insert the meta data
+		exec Prof_InsertPrebillData @prebill_num
+		set @cnt = @cnt + 1
+	  end
+
+  end
+
+close curs_data 
+deallocate curs_data 
+print 'Prebill Rows Added: ' + convert(varchar(8), @cnt)
+GO
