@@ -1,0 +1,46 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+Module:  ExpertImage
+Purpose: Get the next barcode number for the type, called with /LOAD
+	 parm from EICMD.exe
+Author:  ATG
+Revision Notes:
+
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+CREATE PROCEDURE [dbo].[_img_GetNextBarcode]
+(
+@keyType varchar(30)
+)
+as 
+
+set nocount on;
+begin transaction
+
+declare @nextNumber int
+declare @prefix varchar(10)
+
+-- Test for entry IMG_BARCODES, if it's not found, insert the row
+if (select LASTKEY from ExpertImage.dbo.IMG_BARCODES where KEYTYPE = @keyType) is null
+	begin
+	-- Insert the row with a seed value
+	insert into ExpertImage.dbo.IMG_BARCODES(LASTKEY, KEYTYPE) values (100, @keyType) 
+	end
+
+update ExpertImage.dbo.IMG_BARCODES
+set LASTKEY = LASTKEY + 1
+where KEYTYPE = @keyType
+ 
+select  @nextNumber = LASTKEY - 2,
+	@prefix = isnull(prefix, '')
+from ExpertImage.dbo.IMG_BARCODES 
+where KEYTYPE = @keyType
+
+-- Return the prefix and next barcode number
+select rtrim(@prefix) + convert(varchar(12), @nextNumber)
+
+commit transaction
+GO
+
+GRANT  EXECUTE  ON [dbo].[_img_GetNextBarcode]  TO [public]
+GO
