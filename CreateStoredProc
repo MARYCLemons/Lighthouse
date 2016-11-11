@@ -1,0 +1,48 @@
+CREATE procedure dbo.img_PostedBillTest
+(
+@filename varchar(64),
+@result int output,
+@msg varchar(64) output
+)
+	
+AS 
+set nocount on
+declare @ret int, @bill_num int
+
+if ISNUMERIC(@filename) = 0
+	begin
+		set @result = 0
+		set @msg = 'Invalid file name (not numeric) ' + @filename
+	end
+else
+	begin
+		Select @ret = period,
+			@bill_num = bill_num
+		From cmsopen.dbo.blt_bill
+		Where prebill_num = @filename
+
+		if @ret > 0
+			begin
+				-- Posted bill
+				-- Set @result = 1 for normal process
+				-- Set @result = 2 for normal process and rename the file using the @msg value
+				set @result = 2
+				set @msg = convert(varchar(64), @bill_num)
+				-- Delete the CMS dds_draft row for this bill	
+				delete cmsopen.dbo.dds_draft where app_code='BILL' and [file_name] = @filename + '.BIL'
+			end
+		else
+			begin
+				if @ret = 0
+					begin
+						set @result = 0
+						set @msg = 'Unposted bill for prebill# ' + @filename
+					end
+				else
+					begin
+						set @result = 0
+						set @msg = 'No database entry found for prebill# ' + @filename
+					end
+			end
+	end
+GO
