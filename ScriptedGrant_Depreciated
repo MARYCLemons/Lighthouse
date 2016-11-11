@@ -1,0 +1,5 @@
+select 'GRANT  EXECUTE  ON [dbo].[' + name + '] TO [public]' + CHAR(13) + CHAR(10) + 'GO'
+from sys.objects where type in('P', 'FN')
+
+select 'GRANT  SELECT ON [dbo].[' + name + '] TO [public]' + CHAR(13) + CHAR(10) + 'GO'
+from sys.objects where type in('V', 'U')
